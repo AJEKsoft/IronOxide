@@ -1,39 +1,47 @@
 minetest.register_node("base:stone", {
-  description = "stone",
+  description = "Stone",
   tiles = {"stone.png"},
-  diggable = true
+  is_ground_content = true,
+  groups = {cracky = 3, stone=1}
 })
 
 minetest.register_node("base:water", {
-  description = "water",
+  description = "Water",
+  drawtype = "liquid",
+  waving = 3,
+  walkable = false,
+  pointable = false,
+  diggable = false,
+  is_ground_content = false,
+  drowning = 1,
+  liquid_viscosity = 1,
+  use_texture_alpha = "blend",
   tiles = {"water.png"},
 })
 
-minetest.register_node("base:metal_ore", {
-  description = "metal_ore",
-  tiles = {"metal_ore.png"},
-  diggable = true,
-  on_dig = function (pos, node, digger) 
-	minetest.set_node(pos, "base:stone")
-	return true
-  end
+-- Some basic tools
+minetest.register_tool("base:pickaxe", {
+  description = "Pickaxe",
+  inventory_image = "pickaxe.png",
+  tool_capabilities = {
+    full_punch_interval = 3,
+	 max_drop_level = 1,
+	 groupcaps = {
+	   cracky = {
+		  maxlevel = 3,
+		  uses = 100,
+		  times = { [1]=1.60, [2]=1.20, [3]=0.80 }
+      }
+    }
+  }
 })
-
-minetest.register_ore({
-  ore_type = "scatter",
-  ore = "base:metal_ore",
-  wherein = "base:stone",
-  clust_scarcity = 10*10*10,
-  clust_num_ores = 2,
-  clust_size = 3,
-  y_min = -31000,
-  y_max = 500,
-  noise_threshold = 0,
-
-})
-
 
 -- Worldgen aliases
 minetest.register_alias("mapgen_stone", "base:stone")
 minetest.register_alias("mapgen_water_source", "base:water")
 
+-- Add pickaxe to player inventory at start
+minetest.register_on_newplayer(function(player)
+  local inv = player:get_inventory()
+  inv:add_item("main", "base:pickaxe")
+end)
